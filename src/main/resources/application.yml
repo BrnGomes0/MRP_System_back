@@ -1,0 +1,21 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: mrp
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mrp
+    username: postgres
+    password: postgres4041
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # Pode ser 'validate', 'update', 'create', ou 'create-drop'
+    show-sql: true # Exibe as queries SQL no console
+    properties:
+      hibernate:
+        format_sql: true # Formata o SQL exibido
+
