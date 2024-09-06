@@ -8,7 +8,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/mrp
     username: postgres
-    password: postgres4041
+    password: e40024041
     driver-class-name: org.postgresql.Driver
 
   jpa:
