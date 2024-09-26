@@ -23,5 +23,4 @@ public class RegisterAItem {
     private Integer demand;
     private Integer inicialInventory;
     private Integer safetyStock;
-
 }
