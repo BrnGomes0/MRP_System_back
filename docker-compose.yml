@@ -1,6 +1,6 @@
 services:
   mrp-db:
-    image: postgres
+    image: postgres:16
     container_name: mrp-db
     environment:
       POSTGRES_USER: postgres
@@ -10,6 +10,19 @@ services:
       - "6578:5432"
     volumes:
       - mrp-db:/var/lib/postgresql/data/
+    networks:
+      - mrp_net
+
+  pg-admin:
+    depends_on:
+      - mrp-db
+    image: dpage/pgadmin4
+    container_name: pg-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "brunownog05@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "root"
+    ports:
+      - "6969:80"
     networks:
       - mrp_net
 
