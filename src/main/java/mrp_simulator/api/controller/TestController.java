@@ -11,5 +11,4 @@ public class TestController {
     public String helloMan() {
         return "Hello Man";
     }
-
 }

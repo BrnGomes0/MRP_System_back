@@ -17,17 +17,17 @@ public class CreateAInfoRecordController {
     @Autowired
     CreateAInfoRecordService createAInfoRecordService;
 
-    @PostMapping("/create_a_info_record")
+    @PostMapping("/create_inforecord")
     public ResponseEntity<CreateAInfoRecord> createAInfoRecord(@RequestBody @Valid CreateInfoRecordDTO createInfoRecordDTO){
         return createAInfoRecordService.createAInfoRecord(createInfoRecordDTO);
     }
 
-    @GetMapping("/get_all_info_record")
+    @GetMapping("/get_all_inforecord")
     public ResponseEntity<List<CreateAInfoRecord>> getAllInfoRecord(){
         return createAInfoRecordService.getAllInfoRecords();
     }
 
-    @GetMapping("/get_info_record_by_id/{id}")
+    @GetMapping("/get_inforecord_byId/{id}")
     public ResponseEntity<Object> getInfoRecordById(@PathVariable(value = "id") Long idInfoRecord){
         return createAInfoRecordService.getInfoRecordById(idInfoRecord);
     }

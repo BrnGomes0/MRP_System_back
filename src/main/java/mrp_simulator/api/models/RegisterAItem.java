@@ -8,15 +8,15 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "mrp")
+@Entity(name = "RegisterAItem")
+@Table(name = "create_item")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class RegisterAItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //ID_AutoIncrement
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMaterial;
 
     private Integer materialCode;

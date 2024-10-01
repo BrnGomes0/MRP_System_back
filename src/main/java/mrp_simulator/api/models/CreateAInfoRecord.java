@@ -8,8 +8,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "createInfoRecord")
+@Entity(name = "CreateAInfoRecord")
+@Table(name = "create_infoRecord")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
