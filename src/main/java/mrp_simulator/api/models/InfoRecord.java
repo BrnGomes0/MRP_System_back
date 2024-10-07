@@ -8,19 +8,20 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Entity(name = "RegisterAItem")
-@Table(name = "create_item")
+@Entity(name = "InfoRecord")
+@Table(name = "info_record")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class RegisterAItem {
+public class InfoRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idMaterial;
+    private Long idInfoRecord;
 
-    private Integer materialCode;
-    private Integer demand;
-    private Integer inicialInventory;
-    private Integer safetyStock;
+    private int materialCode;
+    private int supplierCode;
+    private BigDecimal price;
+    private int leadTime;
+
 }

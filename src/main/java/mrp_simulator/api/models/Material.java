@@ -6,22 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
-@Entity(name = "CreateAInfoRecord")
-@Table(name = "create_infoRecord")
+@Entity(name = "Material")
+@Table(name = "material")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class CreateAInfoRecord {
+public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idInfoRecord;
+    private Long idMaterial;
 
-    private int materialCode;
-    private int supplierCode;
-    private BigDecimal price;
-    private int leadTime;
+    private Integer materialCode;
+    private Integer demand;
+    private Integer inicialInventory;
+    private Integer safetyStock;
+
 
 }

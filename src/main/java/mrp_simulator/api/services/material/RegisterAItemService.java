@@ -1,8 +1,8 @@
-package mrp_simulator.api.services;
+package mrp_simulator.api.services.material;
 
-import mrp_simulator.api.dtos.RegisterAItemRecordDto;
-import mrp_simulator.api.models.RegisterAItem;
-import mrp_simulator.api.repositories.RegisterAItemRepository;
+import mrp_simulator.api.dtos.material.RegisterAItemRecordDto;
+import mrp_simulator.api.models.Material;
+import mrp_simulator.api.repositories.MaterialRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,11 @@ import java.util.Optional;
 public class RegisterAItemService {
 
     @Autowired
-    RegisterAItemRepository registerAItemRepository;
+    MaterialRepository registerAItemRepository;
 
-    public ResponseEntity<RegisterAItem> registerAItem(RegisterAItemRecordDto registerAItemRecordDto){
+    public ResponseEntity<Material> registerAItem(RegisterAItemRecordDto registerAItemRecordDto){
         try{
-            var registerAItemn = new RegisterAItem();
+            var registerAItemn = new Material();
             BeanUtils.copyProperties(registerAItemRecordDto, registerAItemn);
             var registerANewItem = registerAItemRepository.save(registerAItemn);
             return ResponseEntity.status(HttpStatus.CREATED).body(registerANewItem);
@@ -29,7 +29,7 @@ public class RegisterAItemService {
         }
     }
 
-    public ResponseEntity<List<RegisterAItem>> getAllRegisteredItem(){
+    public ResponseEntity<List<Material>> getAllRegisteredItem(){
         try{
             return ResponseEntity.status(HttpStatus.OK).body(registerAItemRepository.findAll());
         }catch (Exception e){
@@ -39,7 +39,7 @@ public class RegisterAItemService {
 
     public ResponseEntity<Object> getRegisteredItemById(Long idMaterial){
         try{
-            Optional<RegisterAItem> getItemById = registerAItemRepository.findById(idMaterial);
+            Optional<Material> getItemById = registerAItemRepository.findById(idMaterial);
             if(getItemById.isEmpty()){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item de ID: " + idMaterial + " não encontrado!");
             }else{

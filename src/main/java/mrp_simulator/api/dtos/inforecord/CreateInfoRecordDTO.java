@@ -1,4 +1,4 @@
-package mrp_simulator.api.dtos;
+package mrp_simulator.api.dtos.inforecord;
 
 import jakarta.validation.constraints.NotNull;
 
