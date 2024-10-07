@@ -11,7 +11,7 @@ COPY pom.xml .
 
 COPY src ./src
 
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -X
 
 FROM openjdk:17-alpine
 

@@ -20,7 +20,9 @@ public class InfoRecord {
     private Long idInfoRecord;
 
     private int materialCode;
+
     private int supplierCode;
+    private String materialText;
     private BigDecimal price;
     private int leadTime;
 

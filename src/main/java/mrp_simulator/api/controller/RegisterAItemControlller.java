@@ -31,4 +31,9 @@ public class RegisterAItemControlller {
     public ResponseEntity<Object> getRegisteredItemById(@PathVariable(value = "id") Long idMaterial){
         return registerAItemService.getRegisteredItemById(idMaterial);
     }
+
+    @DeleteMapping("/delete_registered_item_by_id/{id}")
+    public ResponseEntity<Object> deleteRegisteredItemById(@PathVariable(value = "id") Long idMaterial){
+        return registerAItemService.deleteRegisteredItemById(idMaterial);
+    }
 }

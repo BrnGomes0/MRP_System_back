@@ -1,8 +1,16 @@
 package mrp_simulator.api.services.material;
 
+<<<<<<< Updated upstream:src/main/java/mrp_simulator/api/services/material/RegisterAItemService.java
 import mrp_simulator.api.dtos.material.RegisterAItemRecordDto;
 import mrp_simulator.api.models.Material;
 import mrp_simulator.api.repositories.MaterialRepository;
+=======
+import jakarta.persistence.EntityNotFoundException;
+import mrp_simulator.api.dtos.RegisterAItemRecordDto;
+import mrp_simulator.api.models.CreateAInfoRecord;
+import mrp_simulator.api.models.RegisterAItem;
+import mrp_simulator.api.repositories.RegisterAItemRepository;
+>>>>>>> Stashed changes:src/main/java/mrp_simulator/api/services/RegisterAItemService.java
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,6 +57,13 @@ public class RegisterAItemService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao pegar o item deste ID");
         }
 
+    }
+
+    public ResponseEntity<Object> deleteRegisteredItemById(Long idMaterial){
+        RegisterAItem registeredItemById = registerAItemRepository.findById(idMaterial)
+                .orElseThrow(() -> new EntityNotFoundException("InfoRecord de ID: " + idMaterial + " inexistente!"));
+        registerAItemRepository.delete(registeredItemById);
+        return ResponseEntity.status(HttpStatus.OK).body("InfoRecord de ID: " + idMaterial + " deletado com sucesso!");
     }
 
 }

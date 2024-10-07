@@ -31,4 +31,10 @@ public class CreateAInfoRecordController {
     public ResponseEntity<Object> getInfoRecordById(@PathVariable(value = "id") Long idInfoRecord){
         return createAInfoRecordService.getInfoRecordById(idInfoRecord);
     }
+
+    @DeleteMapping("/delete_infoRecord_by_id/{id}")
+    public ResponseEntity<Object> deleteInfoRecordById(@PathVariable(value = "id") Long idInfoRecord){
+        return createAInfoRecordService.deleteInfoRecordById(idInfoRecord);
+    }
+
 }
