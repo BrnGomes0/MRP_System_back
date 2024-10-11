@@ -1,13 +1,12 @@
-package mrp_simulator.api.services;
+package mrp_simulator.api.services.inforecord;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.NotNull;
-import mrp_simulator.api.dtos.CreateInfoRecordDTO;
-import mrp_simulator.api.models.CreateAInfoRecord;
-import mrp_simulator.api.models.RegisterAItem;
-import mrp_simulator.api.repositories.CreateAInfoRecordRepository;
-import mrp_simulator.api.repositories.RegisterAItemRepository;
-import org.springframework.beans.BeanUtils;
+
+import mrp_simulator.api.dtos.inforecord.DTOCreateInfoRecord;
+import mrp_simulator.api.models.InfoRecord;
+import mrp_simulator.api.models.Material;
+import mrp_simulator.api.repositories.InforecordRepository;
+import mrp_simulator.api.repositories.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +16,24 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CreateAInfoRecordService {
+public class InforecordService {
 
     @Autowired
-    CreateAInfoRecordRepository createAInfoRecordRepository;
+    InforecordRepository InforecordRepository;
 
     @Autowired
-    RegisterAItemRepository registerAItemRepository;
+    MaterialRepository materialRepository;
 
-    public ResponseEntity<CreateAInfoRecord> createAInfoRecord(CreateInfoRecordDTO createInfoRecordDTO){
+    public ResponseEntity<InfoRecord> createAInfoRecord(DTOCreateInfoRecord createInfoRecordDTO){
         try{
-            Optional<RegisterAItem> lastItemRegistered = registerAItemRepository.findFirstByOrderByIdMaterialDesc();
+            Optional<Material> lastItemRegistered = materialRepository.findFirstByOrderByIdMaterialDesc();
             if(lastItemRegistered.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
-            RegisterAItem lastRegisterItem = lastItemRegistered.get();
+            Material last_material  = lastItemRegistered.get();
 
-            CreateAInfoRecord createAInfoRecordN = new CreateAInfoRecord();
-            var materialCode = lastRegisterItem.getMaterialCode();
+            InfoRecord createAInfoRecordN = new InfoRecord();
+            var materialCode = last_material.getMaterialCode();
             createAInfoRecordN.setMaterialCode(materialCode);
             if(materialCode == 1230){
                 createAInfoRecordN.setMaterialText("Material A");
@@ -50,7 +49,7 @@ public class CreateAInfoRecordService {
                 createAInfoRecordN.setSupplierCode(929029);
             }
 
-            var createAInfoRecordF = createAInfoRecordRepository.save(createAInfoRecordN);
+            var createAInfoRecordF = InforecordRepository.save(createAInfoRecordN);
             return ResponseEntity.status(HttpStatus.CREATED).body(createAInfoRecordF);
 
         }catch (Exception e){
@@ -58,9 +57,9 @@ public class CreateAInfoRecordService {
         }
     }
 
-    public ResponseEntity<List<CreateAInfoRecord>> getAllInfoRecords(){
+    public ResponseEntity<List<InfoRecord>> getAllInfoRecords(){
         try{
-            return ResponseEntity.status(HttpStatus.OK).body(createAInfoRecordRepository.findAll());
+            return ResponseEntity.status(HttpStatus.OK).body(InforecordRepository.findAll());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -68,7 +67,7 @@ public class CreateAInfoRecordService {
 
     public ResponseEntity<Object> getInfoRecordById(Long idInfoRecord){
         try{
-            Optional<CreateAInfoRecord> infoRecordById = createAInfoRecordRepository.findById(idInfoRecord);
+            Optional<InfoRecord> infoRecordById = InforecordRepository.findById(idInfoRecord);
             if (infoRecordById.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Info Record de ID: " + idInfoRecord + " não encontrado!");
             }else{
@@ -80,9 +79,9 @@ public class CreateAInfoRecordService {
     }
 
     public ResponseEntity<Object> deleteInfoRecordById(Long idInfoRecord){
-        CreateAInfoRecord infoRecordById = createAInfoRecordRepository.findById(idInfoRecord)
+        InfoRecord infoRecordById = InforecordRepository.findById(idInfoRecord)
                 .orElseThrow(() -> new EntityNotFoundException("InfoRecord de ID: " + idInfoRecord + " inexistente!"));
-        createAInfoRecordRepository.delete(infoRecordById);
+        InforecordRepository.delete(infoRecordById);
         return ResponseEntity.status(HttpStatus.OK).body("InfoRecord de ID: " + idInfoRecord + " deletado com sucesso!");
     }
 }

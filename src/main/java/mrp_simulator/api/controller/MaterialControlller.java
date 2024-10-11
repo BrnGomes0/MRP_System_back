@@ -1,9 +1,9 @@
 package mrp_simulator.api.controller;
 
 import jakarta.validation.Valid;
-import mrp_simulator.api.dtos.material.RegisterAItemRecordDto;
+import mrp_simulator.api.dtos.material.DTORegisterItem;
 import mrp_simulator.api.models.Material;
-import mrp_simulator.api.services.material.RegisterAItemService;
+import mrp_simulator.api.services.material.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/material")
-public class RegisterAItemControlller {
+public class MaterialControlller {
 
     @Autowired
-    RegisterAItemService registerAItemService;
+    MaterialService registerAItemService;
 
     @PostMapping
-    public ResponseEntity<Material> registerAItem(@RequestBody @Valid RegisterAItemRecordDto registerAItemRecordDto){
+    public ResponseEntity<Material> registerAItem(@RequestBody @Valid DTORegisterItem registerAItemRecordDto){
         return registerAItemService.registerAItem(registerAItemRecordDto);
     }
 

@@ -1,9 +1,9 @@
 package mrp_simulator.api.controller;
 
 import jakarta.validation.Valid;
-import mrp_simulator.api.dtos.inforecord.CreateInfoRecordDTO;
+import mrp_simulator.api.dtos.inforecord.DTOCreateInfoRecord;
 import mrp_simulator.api.models.InfoRecord;
-import mrp_simulator.api.services.inforecord.CreateAInfoRecordService;
+import mrp_simulator.api.services.inforecord.InforecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,29 +12,29 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/inforecord")
-public class CreateAInfoRecordController {
+public class InforecordController {
 
     @Autowired
-    CreateAInfoRecordService createAInfoRecordService;
+    InforecordService inforecordService;
 
     @PostMapping
-    public ResponseEntity<InfoRecord> createAInfoRecord(@RequestBody @Valid CreateInfoRecordDTO createInfoRecordDTO){
-        return createAInfoRecordService.createAInfoRecord(createInfoRecordDTO);
+    public ResponseEntity<InfoRecord> createAInfoRecord(@RequestBody @Valid DTOCreateInfoRecord createInfoRecordDTO){
+        return inforecordService.createAInfoRecord(createInfoRecordDTO);
     }
 
     @GetMapping("/inforecord")
     public ResponseEntity<List<InfoRecord>> getAllInfoRecord(){
-        return createAInfoRecordService.getAllInfoRecords();
+        return inforecordService.getAllInfoRecords();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getInfoRecordById(@PathVariable(value = "id") Long idInfoRecord){
-        return createAInfoRecordService.getInfoRecordById(idInfoRecord);
+        return inforecordService.getInfoRecordById(idInfoRecord);
     }
 
     @DeleteMapping("/delete_infoRecord_by_id/{id}")
     public ResponseEntity<Object> deleteInfoRecordById(@PathVariable(value = "id") Long idInfoRecord){
-        return createAInfoRecordService.deleteInfoRecordById(idInfoRecord);
+        return inforecordService.deleteInfoRecordById(idInfoRecord);
     }
 
 }

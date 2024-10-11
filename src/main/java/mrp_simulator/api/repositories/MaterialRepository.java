@@ -8,5 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface MaterialRepository extends JpaRepository<Material, Long> {
+    Optional<Material> findById(Long idMaterial);
     Optional<Material> findByMaterialCode(int materialCode);
+    Optional<Material> findFirstByOrderByIdMaterialDesc();;
 }

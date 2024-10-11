@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mrp_simulator.api.dtos.inventory.DTOUpdateInventory;
-
 
 @Entity(name = "Inventory")
 @Table(name = "inventory")
@@ -18,22 +16,19 @@ public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long inventory_id;
 
     private Integer week;
+    private Integer demand;
+    private Integer quantityInInventory;
+    private String materialName;
 
     @ManyToOne
-    @JoinColumn(name = "material_id", referencedColumnName = "idMaterial")
+    @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
-    private Integer safetyStock;
-    private Integer consumption;
-    private Integer inicialInventory;
-    private Integer finalInventory;
-    private Integer order_received;
+    @OneToOne
+    @JoinColumn(name = "purchaseOrder_id")
+    private PurchaseOrder relatedPurchaseOrder;
 
-    public Inventory(DTOUpdateInventory data){
-        this.consumption = data.comsumption();
-        this.order_received = data.order_received();
-    }
 }

@@ -1,17 +1,20 @@
 package mrp_simulator.api.services.inventory;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import mrp_simulator.api.dtos.inventory.DTORegisterInventory;
-import mrp_simulator.api.dtos.inventory.DTODetailInventory;
-import mrp_simulator.api.dtos.inventory.DTOUpdateInventory;
+import mrp_simulator.api.dtos.inventory.DTOAllInventory;
+import mrp_simulator.api.dtos.inventory.DTODetailFirstWeek;
+import mrp_simulator.api.infra.error.exceptions.FirstWeekMaterialRegisted;
+import mrp_simulator.api.infra.error.exceptions.MaterialNotFound;
 import mrp_simulator.api.models.Inventory;
+import mrp_simulator.api.models.Material;
 import mrp_simulator.api.repositories.InventoryRepository;
 import mrp_simulator.api.repositories.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InventoryService {
@@ -22,56 +25,54 @@ public class InventoryService {
     @Autowired
     private MaterialRepository materialRepository;
 
-    // POST
     @Transactional
-    public DTORegisterInventory createInventory(@PathVariable Long materialId){
+    // POST -> First Week (1)
+    public DTODetailFirstWeek registerFirstWeek (@PathVariable Long material_id){
 
-        // Search Material
-        var material = materialRepository.findById(materialId).orElseThrow(() -> new RuntimeException("Material not found!"));
+        // Search Material by ID
+        Material material = materialRepository.findById(material_id).orElseThrow(() -> new MaterialNotFound("Material Not Found with that ID: " + material_id));
+
+        boolean isMaterialRegistered = inventoryRepository.existsByMaterialAndWeek(material, 1);
+        if(isMaterialRegistered){
+            throw new FirstWeekMaterialRegisted("Material already registered for the first week: " + material.getMaterialCode());
+        }
 
         Inventory inventory = new Inventory();
-
-        /*
-            InicialInventory = Material InicialInventory
-            SafetyStock = Material SafetyStock
-            Consumption = InicialInventory - demand
-        */
-        inventory.setInicialInventory(material.getInicialInventory());
-        inventory.setConsumption(material.getInicialInventory() - material.getDemand());
-        inventory.setSafetyStock(material.getSafetyStock());
-        inventory.setFinalInventory(material.getInicialInventory() - inventory.getConsumption());
+        inventory.setWeek(1);
+        inventory.setQuantityInInventory(material.getInicialInventory());
+        inventory.setDemand(material.getDemand());
+        inventory.setMaterial(material);
+        if(material.getMaterialCode().equals(1230)){
+            inventory.setMaterialName("Material A - (Pen)");
+        } else if (material.getMaterialCode().equals(1240)) {
+            inventory.setMaterialName("Material B - (Package)");
+        }
 
         inventoryRepository.save(inventory);
 
-        return new DTORegisterInventory(
-                material.getIdMaterial(),
-                1,
-                inventory.getSafetyStock(),
-                inventory.getConsumption(),
-                inventory.getInicialInventory(),
-                inventory.getFinalInventory()
+        return new DTODetailFirstWeek(
+                inventory.getInventory_id(),
+                inventory.getWeek(),
+                inventory.getMaterialName(),
+                inventory.getDemand(),
+                inventory.getQuantityInInventory()
         );
     }
 
     // UPDATE
-    /*
-        Fixed Fields:
-            Safety Stock
-            Initial Inventory
-    */
-//    @Transactional
-//    public DTODetailInventory updateInventory(@RequestBody @Valid DTOUpdateInventory dtoUpdateInventory, @PathVariable Long inventory_id){
-//
-//        var inventory = materialRepository.findById(material_id).orElseThrow(() -> new RuntimeException("Material not found!"));
-//
-//        Inventory inventory = new Inventory(dtoUpdateInventory);
-//        inventory.setConsumption(dtoUpdateInventory.comsumption());
-//        inventory.setOrder_received(dtoUpdateInventory.order_received());
-//        inventory.setFinalInventory(inventory.getFinalInventory() + dtoUpdateInventory.order_received());
-//
-//
-//    }
 
-    // GET ALL
+    // GET ALL Material
+    public List<DTOAllInventory> getAllInventories(){
+        List<Inventory> inventories = inventoryRepository.findAll();
 
+        // Convert each inventory of DTO and return a list
+        return inventories.stream().map(
+                inventory -> new DTOAllInventory(
+                        inventory.getInventory_id(),
+                        inventory.getWeek(),
+                        inventory.getMaterialName(),
+                        inventory.getDemand(),
+                        inventory.getQuantityInInventory()
+                )).collect(Collectors.toList());
+    }
 }
