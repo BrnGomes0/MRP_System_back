@@ -3,6 +3,7 @@ package mrp_simulator.api.services.inforecord;
 import jakarta.persistence.EntityNotFoundException;
 
 import mrp_simulator.api.dtos.inforecord.DTOCreateInfoRecord;
+import mrp_simulator.api.dtos.inforecord.DTODeleteInforecord;
 import mrp_simulator.api.models.InfoRecord;
 import mrp_simulator.api.models.Material;
 import mrp_simulator.api.repositories.InforecordRepository;
@@ -25,7 +26,7 @@ public class InforecordService {
     MaterialRepository materialRepository;
 
     public ResponseEntity<InfoRecord> createAInfoRecord(DTOCreateInfoRecord createInfoRecordDTO){
-        try{
+
             Optional<Material> lastItemRegistered = materialRepository.findFirstByOrderByIdMaterialDesc();
             if(lastItemRegistered.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -52,36 +53,28 @@ public class InforecordService {
             var createAInfoRecordF = InforecordRepository.save(createAInfoRecordN);
             return ResponseEntity.status(HttpStatus.CREATED).body(createAInfoRecordF);
 
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
     }
 
     public ResponseEntity<List<InfoRecord>> getAllInfoRecords(){
-        try{
             return ResponseEntity.status(HttpStatus.OK).body(InforecordRepository.findAll());
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
     }
 
     public ResponseEntity<Object> getInfoRecordById(Long idInfoRecord){
-        try{
             Optional<InfoRecord> infoRecordById = InforecordRepository.findById(idInfoRecord);
             if (infoRecordById.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Info Record de ID: " + idInfoRecord + " não encontrado!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ID InfoRecord: " + idInfoRecord + " not found!");
             }else{
                 return ResponseEntity.status(HttpStatus.OK).body(infoRecordById.get());
             }
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passe o valor correto do ID!");
-        }
     }
 
-    public ResponseEntity<Object> deleteInfoRecordById(Long idInfoRecord){
+    public DTODeleteInforecord deleteInfoRecordById(Long idInfoRecord){
         InfoRecord infoRecordById = InforecordRepository.findById(idInfoRecord)
-                .orElseThrow(() -> new EntityNotFoundException("InfoRecord de ID: " + idInfoRecord + " inexistente!"));
+                .orElseThrow(() -> new EntityNotFoundException("ID InfoRecord: " + idInfoRecord + " non-existent!"));
         InforecordRepository.delete(infoRecordById);
-        return ResponseEntity.status(HttpStatus.OK).body("InfoRecord de ID: " + idInfoRecord + " deletado com sucesso!");
+
+        String message_deleted = "ID InfoRecord: " + idInfoRecord + "deleted successfully!";
+
+        return new DTODeleteInforecord(idInfoRecord, message_deleted);
     }
 }

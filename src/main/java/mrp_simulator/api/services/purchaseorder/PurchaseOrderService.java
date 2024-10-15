@@ -72,9 +72,15 @@ public class PurchaseOrderService {
         );
 
 
+        // Calculate the orderPlaced
+        int inventory = originalInventory.getQuantityInInventory();
+        int demand = dtoUpdatePurchasingOrder.demand();
+        int orderPlaced = demand > inventory ? demand - inventory: 0;
+
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1);
         newPurchaseOrder.setDemand(dtoUpdatePurchasingOrder.demand());
+        newPurchaseOrder.setOrderPlaced(orderPlaced);
         newPurchaseOrder.setOrderReceived(dtoUpdatePurchasingOrder.orderReceived());
         newPurchaseOrder.setInventory(originalInventory);
 

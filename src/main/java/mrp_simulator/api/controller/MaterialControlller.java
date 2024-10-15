@@ -1,10 +1,12 @@
 package mrp_simulator.api.controller;
 
 import jakarta.validation.Valid;
+import mrp_simulator.api.dtos.material.DTODeleteMaterial;
 import mrp_simulator.api.dtos.material.DTORegisterItem;
 import mrp_simulator.api.models.Material;
 import mrp_simulator.api.services.material.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +34,9 @@ public class MaterialControlller {
         return registerAItemService.getRegisteredItemById(idMaterial);
     }
 
-    @DeleteMapping("/delete_registered_item_by_id/{id}")
-    public ResponseEntity<Object> deleteRegisteredItemById(@PathVariable(value = "id") Long idMaterial){
-        return registerAItemService.deleteRegisteredItemById(idMaterial);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<DTODeleteMaterial> deleteRegisteredItemById(@PathVariable(value = "id") Long idMaterial){
+        var material_deleted =  registerAItemService.deleteRegisteredItemById(idMaterial);
+        return ResponseEntity.status(HttpStatus.OK).body(material_deleted);
     }
 }

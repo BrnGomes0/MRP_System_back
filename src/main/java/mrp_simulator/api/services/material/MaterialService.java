@@ -1,5 +1,6 @@
 package mrp_simulator.api.services.material;
 
+import mrp_simulator.api.dtos.material.DTODeleteMaterial;
 import mrp_simulator.api.dtos.material.DTORegisterItem;
 import mrp_simulator.api.models.Material;
 import mrp_simulator.api.repositories.MaterialRepository;
@@ -21,43 +22,34 @@ public class MaterialService {
     MaterialRepository registerAItemRepository;
 
     public ResponseEntity<Material> registerAItem(DTORegisterItem registerAItemRecordDto){
-        try{
             var registerAItemn = new Material();
             BeanUtils.copyProperties(registerAItemRecordDto, registerAItemn);
             var registerANewItem = registerAItemRepository.save(registerAItemn);
             return ResponseEntity.status(HttpStatus.CREATED).body(registerANewItem);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
     }
 
     public ResponseEntity<List<Material>> getAllRegisteredItem(){
-        try{
             return ResponseEntity.status(HttpStatus.OK).body(registerAItemRepository.findAll());
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
     }
 
     public ResponseEntity<Object> getRegisteredItemById(Long idMaterial){
-        try{
             Optional<Material> getItemById = registerAItemRepository.findById(idMaterial);
             if(getItemById.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item de ID: " + idMaterial + " não encontrado!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ID Material: " + idMaterial + " not found!");
             }else{
                 return ResponseEntity.status(HttpStatus.OK).body(getItemById.get());
             }
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao pegar o item deste ID");
-        }
 
     }
 
-    public ResponseEntity<Object> deleteRegisteredItemById(Long idMaterial){
+    public DTODeleteMaterial deleteRegisteredItemById(Long idMaterial){
         Material registeredItemById = registerAItemRepository.findById(idMaterial)
-                .orElseThrow(() -> new EntityNotFoundException("InfoRecord de ID: " + idMaterial + " inexistente!"));
+                .orElseThrow(() -> new EntityNotFoundException("ID Material: " + idMaterial + " non-existent!"));
         registerAItemRepository.delete(registeredItemById);
-        return ResponseEntity.status(HttpStatus.OK).body("InfoRecord de ID: " + idMaterial + " deletado com sucesso!");
+
+        String messsage_deleted = "ID Material: " + idMaterial + "deleted successfully!";
+
+        return new DTODeleteMaterial(idMaterial, messsage_deleted);
     }
 
 }
