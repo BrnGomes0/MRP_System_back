@@ -22,6 +22,7 @@ public class Inventory {
     private Integer demand;
     private Integer quantityInInventory;
     private String materialName;
+    private Integer safetyStock;
 
     @ManyToOne
     @JoinColumn(name = "material_id", nullable = false)

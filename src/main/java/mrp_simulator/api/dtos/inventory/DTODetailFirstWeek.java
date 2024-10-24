@@ -4,6 +4,7 @@ public record DTODetailFirstWeek(
         Long id,
         Integer week,
         String materialName,
+        Integer safetyStock,
         Integer demand,
         Integer quantityInInventory
 ) {

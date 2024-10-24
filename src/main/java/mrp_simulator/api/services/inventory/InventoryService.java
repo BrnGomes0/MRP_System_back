@@ -30,7 +30,8 @@ public class InventoryService {
     public DTODetailFirstWeek registerFirstWeek (@PathVariable Long material_id){
 
         // Search Material by ID
-        Material material = materialRepository.findById(material_id).orElseThrow(() -> new MaterialNotFound("Material Not Found with that ID: " + material_id));
+        Material material = materialRepository.findById(material_id).
+                orElseThrow(() -> new MaterialNotFound("Material Not Found with that ID: " + material_id));
 
         boolean isMaterialRegistered = inventoryRepository.existsByMaterialAndWeek(material, 1);
         if(isMaterialRegistered){
@@ -40,6 +41,7 @@ public class InventoryService {
         Inventory inventory = new Inventory();
         inventory.setWeek(1);
         inventory.setQuantityInInventory(material.getInicialInventory());
+        inventory.setSafetyStock(material.getSafetyStock());
         inventory.setDemand(material.getDemand());
         inventory.setMaterial(material);
         if(material.getMaterialCode().equals(1230)){
@@ -54,6 +56,7 @@ public class InventoryService {
                 inventory.getInventory_id(),
                 inventory.getWeek(),
                 inventory.getMaterialName(),
+                inventory.getSafetyStock(),
                 inventory.getDemand(),
                 inventory.getQuantityInInventory()
         );
@@ -71,6 +74,7 @@ public class InventoryService {
                         inventory.getInventory_id(),
                         inventory.getWeek(),
                         inventory.getMaterialName(),
+                        inventory.getSafetyStock(),
                         inventory.getDemand(),
                         inventory.getQuantityInInventory()
                 )).collect(Collectors.toList());

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/inforecord")
 public class InforecordController {
@@ -19,7 +20,7 @@ public class InforecordController {
     @Autowired
     InforecordService inforecordService;
 
-    @PostMapping
+    @PostMapping("/teste")
     public ResponseEntity<InfoRecord> createAInfoRecord(@RequestBody @Valid DTOCreateInfoRecord createInfoRecordDTO){
         return inforecordService.createAInfoRecord(createInfoRecordDTO);
     }

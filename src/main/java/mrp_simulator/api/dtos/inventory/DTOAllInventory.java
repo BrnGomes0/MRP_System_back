@@ -5,6 +5,7 @@ public record DTOAllInventory(
         Integer week,
         String materialName,
         Integer demand,
-        Integer stockQuantity
+        Integer stockQuantity,
+        Integer safetyStock
 ) {
 }
