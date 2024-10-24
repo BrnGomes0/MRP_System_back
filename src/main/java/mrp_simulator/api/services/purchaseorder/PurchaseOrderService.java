@@ -72,11 +72,16 @@ public class PurchaseOrderService {
         );
 
 
-        // Calculate the orderPlaced
-        int inventory = originalInventory.getQuantityInInventory();
-        int demand = dtoUpdatePurchasingOrder.demand();
-        int orderPlaced = demand > inventory ? demand - inventory: 0;
+        // Creating a logic in MRP (Variables)
+        int initialInventory = originalInventory.getFinalInventory() + lastPurchaseOrder.getOrderReceived();
+        System.out.println("Order Received: " + lastPurchaseOrder.getOrderReceived());
+        System.out.println("Initial Inventory: " + initialInventory);
 
+        int finalInventory = initialInventory - lastPurchaseOrder.getDemand() + lastPurchaseOrder.getOrderReceived();
+
+        int orderPlaced = originalInventory.getSafetyStock() - finalInventory;
+
+        // Creating a new PurchaseOrder
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1);
         newPurchaseOrder.setDemand(dtoUpdatePurchasingOrder.demand());
@@ -85,14 +90,17 @@ public class PurchaseOrderService {
         newPurchaseOrder.setInventory(originalInventory);
 
 
+        // Creating a new Inventory
         Inventory newInventory = new Inventory();
         newInventory.setMaterialName(originalInventory.getMaterialName());
         newInventory.setMaterial(originalInventory.getMaterial());
-        newInventory.setQuantityInInventory(originalInventory.getQuantityInInventory() + dtoUpdatePurchasingOrder.orderReceived());
+        newInventory.setSafetyStock(originalInventory.getSafetyStock());
+        newInventory.setInitialInventory(initialInventory);
+        newInventory.setFinalInventory(finalInventory);
+        newInventory.setPendingOrder(orderPlaced);
         newInventory.setDemand(dtoUpdatePurchasingOrder.demand());
         newInventory.setWeek(newPurchaseOrder.getWeek());
         newInventory.setRelatedPurchaseOrder(newPurchaseOrder);
-
 
         purchaseOrderRepository.save(newPurchaseOrder);
         inventoryRepository.save(newInventory);
@@ -124,7 +132,7 @@ public class PurchaseOrderService {
                 )).collect(Collectors.toList());
     }
 
-    // GET ALL with filter Materials A
+    // GET ALL with filter Materials B
     public List<DTOAllPurchaseOrder> getAllPurchasingOrdersBasedMaterialB(){
 
         List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll();

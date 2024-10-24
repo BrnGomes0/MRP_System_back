@@ -32,4 +32,16 @@ public class InventoryController {
         var inventories = inventoryService.getAllInventories();
         return ResponseEntity.status(HttpStatus.OK).body(inventories);
     }
+
+    @GetMapping("/allMaterialsA")
+    public ResponseEntity<List<DTOAllInventory>> returnAllInventoriesMaterialsA(){
+        var inventories_materialsA = inventoryService.getAllInventoryBasedMaterialA();
+        return ResponseEntity.status(HttpStatus.OK).body(inventories_materialsA);
+    }
+
+    @GetMapping("/allMaterialsB")
+    public ResponseEntity<List<DTOAllInventory>> returnAllInventoriesMaterialsB(){
+        var inventories_materialsB = inventoryService.getAllInventoryBasedMaterialB();
+        return ResponseEntity.status(HttpStatus.OK).body(inventories_materialsB);
+    }
 }

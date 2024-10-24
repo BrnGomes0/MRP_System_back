@@ -17,12 +17,14 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inventory_id;
-
     private Integer week;
     private Integer demand;
-    private Integer quantityInInventory;
+//    private Integer quantityInInventory;
+    private Integer initialInventory;
+    private Integer finalInventory;
     private String materialName;
     private Integer safetyStock;
+    private Integer pendingOrder;
 
     @ManyToOne
     @JoinColumn(name = "material_id", nullable = false)

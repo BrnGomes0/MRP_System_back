@@ -40,7 +40,8 @@ public class InventoryService {
 
         Inventory inventory = new Inventory();
         inventory.setWeek(1);
-        inventory.setQuantityInInventory(material.getInicialInventory());
+        inventory.setInitialInventory(material.getInicialInventory());
+        inventory.setFinalInventory(material.getInicialInventory());
         inventory.setSafetyStock(material.getSafetyStock());
         inventory.setDemand(material.getDemand());
         inventory.setMaterial(material);
@@ -58,11 +59,10 @@ public class InventoryService {
                 inventory.getMaterialName(),
                 inventory.getSafetyStock(),
                 inventory.getDemand(),
-                inventory.getQuantityInInventory()
+                inventory.getInitialInventory(),
+                inventory.getFinalInventory()
         );
     }
-
-    // UPDATE
 
     // GET ALL Material
     public List<DTOAllInventory> getAllInventories(){
@@ -76,7 +76,45 @@ public class InventoryService {
                         inventory.getMaterialName(),
                         inventory.getSafetyStock(),
                         inventory.getDemand(),
-                        inventory.getQuantityInInventory()
+                        inventory.getInitialInventory(),
+                        inventory.getFinalInventory()
                 )).collect(Collectors.toList());
+    }
+
+    // GET ALL with filter Materials A
+    public List<DTOAllInventory> getAllInventoryBasedMaterialA(){
+
+        List<Inventory> inventories = inventoryRepository.findAll();
+
+        return inventories.stream()
+                .filter(inventory -> "Material A - (Pen)".equals(inventory.getMaterialName()))
+                .map(inventory -> new DTOAllInventory(
+                        inventory.getInventory_id(),
+                        inventory.getWeek(),
+                        inventory.getMaterialName(),
+                        inventory.getDemand(),
+                        inventory.getInitialInventory(),
+                        inventory.getFinalInventory(),
+                        inventory.getSafetyStock()
+                )).collect(Collectors.toList());
+
+    }
+    // GET ALL with filter Materials B
+    public List<DTOAllInventory> getAllInventoryBasedMaterialB(){
+
+        List<Inventory> inventories = inventoryRepository.findAll();
+
+        return inventories.stream()
+                .filter(inventory -> "Material B - (Package)".equals(inventory.getMaterialName()))
+                .map(inventory -> new DTOAllInventory(
+                        inventory.getInventory_id(),
+                        inventory.getWeek(),
+                        inventory.getMaterialName(),
+                        inventory.getDemand(),
+                        inventory.getInitialInventory(),
+                        inventory.getFinalInventory(),
+                        inventory.getSafetyStock()
+                )).collect(Collectors.toList());
+
     }
 }
