@@ -40,8 +40,8 @@ public class InventoryService {
 
         Inventory inventory = new Inventory();
         inventory.setWeek(1);
-        inventory.setInitialInventory(material.getInicialInventory());
-        inventory.setFinalInventory(material.getInicialInventory());
+        inventory.setInitialInventory(material.getInitialInventory());
+        inventory.setFinalInventory(material.getInitialInventory());
         inventory.setSafetyStock(material.getSafetyStock());
         inventory.setDemand(material.getDemand());
         inventory.setMaterial(material);

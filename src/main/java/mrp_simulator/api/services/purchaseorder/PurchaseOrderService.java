@@ -67,17 +67,29 @@ public class PurchaseOrderService {
                 () -> new InventoryNotFound("Inventory Not Found with ID: " + inventory_id));
 
 
-        PurchaseOrder lastPurchaseOrder = purchaseOrderRepository.findFirstByInventoryOrderByWeekDesc(originalInventory).orElseThrow(
-                () -> new PurchasingOrderNotFound("Purchase order not found for inventory ID: " + inventory_id)
+//        PurchaseOrder lastPurchaseOrder = purchaseOrderRepository.findFirstByInventoryOrderByWeekDesc(originalInventory).orElseThrow(
+//                () -> new PurchasingOrderNotFound("Purchase order not found for inventory ID: " + inventory_id)
+//        );
+
+        PurchaseOrder lastPurchaseOrder = purchaseOrderRepository.findById(inventory_id).orElseThrow(
+                () -> new PurchasingOrderNotFound("Purchase Order not found based in inventory ID: " + inventory_id)
         );
 
 
         // Creating a logic in MRP (Variables)
         int initialInventory = originalInventory.getFinalInventory() + lastPurchaseOrder.getOrderReceived();
-        System.out.println("Order Received: " + lastPurchaseOrder.getOrderReceived());
-        System.out.println("Initial Inventory: " + initialInventory);
-
         int finalInventory = initialInventory - lastPurchaseOrder.getDemand() + lastPurchaseOrder.getOrderReceived();
+        System.out.println("First Initial Inventory: " + initialInventory);
+        System.out.println("First Final Inventory: " + finalInventory);
+
+        if(lastPurchaseOrder.getWeek() > 2){
+            initialInventory = originalInventory.getFinalInventory() + dtoUpdatePurchasingOrder.orderReceived();
+            finalInventory = initialInventory - dtoUpdatePurchasingOrder.demand() + dtoUpdatePurchasingOrder.orderReceived();
+
+            System.out.println("Second Initial Inventory: " + initialInventory);
+            System.out.println("Second Final Inventory: " + finalInventory);
+        }
+
 
         int orderPlaced = originalInventory.getSafetyStock() - finalInventory;
 

@@ -19,7 +19,7 @@ public class Material {
 
     private Integer materialCode;
     private Integer demand;
-    private Integer inicialInventory;
+    private Integer initialInventory;
     private Integer safetyStock;
 
 
