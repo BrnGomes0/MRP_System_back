@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "Inventory")
 @Table(name = "inventory")
 @Getter
@@ -19,7 +22,6 @@ public class Inventory {
     private Long inventory_id;
     private Integer week;
     private Integer demand;
-//    private Integer quantityInInventory;
     private Integer initialInventory;
     private Integer finalInventory;
     private String materialName;
@@ -30,8 +32,11 @@ public class Inventory {
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
-    @OneToOne
-    @JoinColumn(name = "purchaseOrder_id")
-    private PurchaseOrder relatedPurchaseOrder;
-
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "inventory_purchaseorder",
+            joinColumns = @JoinColumn(name = "inventory_id"),
+            inverseJoinColumns = @JoinColumn(name = "purchaseOrder_id")
+    )
+    private List<PurchaseOrder> relatedPurchaseOrders = new ArrayList<>();
 }

@@ -74,10 +74,10 @@ public class InventoryService {
                         inventory.getInventory_id(),
                         inventory.getWeek(),
                         inventory.getMaterialName(),
-                        inventory.getSafetyStock(),
                         inventory.getDemand(),
                         inventory.getInitialInventory(),
-                        inventory.getFinalInventory()
+                        inventory.getFinalInventory(),
+                        inventory.getSafetyStock()
                 )).collect(Collectors.toList());
     }
 

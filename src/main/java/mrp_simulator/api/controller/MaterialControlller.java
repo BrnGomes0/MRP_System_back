@@ -2,6 +2,7 @@ package mrp_simulator.api.controller;
 
 import jakarta.validation.Valid;
 import mrp_simulator.api.dtos.material.DTODeleteMaterial;
+import mrp_simulator.api.dtos.material.DTODetailMaterialCreated;
 import mrp_simulator.api.dtos.material.DTORegisterItem;
 import mrp_simulator.api.models.Material;
 import mrp_simulator.api.services.material.MaterialService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -21,8 +23,11 @@ public class MaterialControlller {
     MaterialService registerAItemService;
 
     @PostMapping
-    public ResponseEntity<Material> registerAItem(@RequestBody @Valid DTORegisterItem registerAItemRecordDto){
-        return registerAItemService.registerAItem(registerAItemRecordDto);
+    public ResponseEntity<DTODetailMaterialCreated> registerAItem(@RequestBody @Valid DTORegisterItem registerAItemRecordDto, UriComponentsBuilder uriComponentsBuilder){
+         var material = registerAItemService.createMaterial(registerAItemRecordDto);
+         var uri = uriComponentsBuilder.path("/material/{material_id}").build(material.material_id());
+
+         return ResponseEntity.created(uri).body(material);
     }
 
     @GetMapping("/materials")

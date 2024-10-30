@@ -36,7 +36,7 @@ public class PurchaseOrderService {
         Inventory inventory = inventoryRepository.findById(inventory_id).orElseThrow(
                 () -> new InventoryNotFound("Inventory Not Found with ID: " + inventory_id));
 
-        boolean isInventoryRegistred = purchaseOrderRepository.existsByInventoryAndWeek(inventory, 1);
+        boolean isInventoryRegistred = purchaseOrderRepository.existsByInventoriesContainingAndWeek(inventory, 1);
         if(isInventoryRegistred){
             throw new FirstWeekInventoryRegistred("Inventory already registered for the first week: " + inventory.getMaterialName());
         }
@@ -46,7 +46,7 @@ public class PurchaseOrderService {
         purchaseOrder.setDemand(inventory.getDemand());
         purchaseOrder.setOrderPlaced(0);
         purchaseOrder.setOrderReceived(0);
-        purchaseOrder.setInventory(inventory);
+        purchaseOrder.addInventory(inventory);
 
         purchaseOrderRepository.save(purchaseOrder);
 
@@ -67,42 +67,18 @@ public class PurchaseOrderService {
                 () -> new InventoryNotFound("Inventory Not Found with ID: " + inventory_id));
 
 
-//        PurchaseOrder lastPurchaseOrder = purchaseOrderRepository.findFirstByInventoryOrderByWeekDesc(originalInventory).orElseThrow(
-//                () -> new PurchasingOrderNotFound("Purchase order not found for inventory ID: " + inventory_id)
-//        );
-
-        PurchaseOrder lastPurchaseOrder = purchaseOrderRepository.findById(inventory_id).orElseThrow(
-                () -> new PurchasingOrderNotFound("Purchase Order not found based in inventory ID: " + inventory_id)
+        PurchaseOrder lastPurchaseOrder = purchaseOrderRepository.findFirstByInventoriesContainingOrderByWeekDesc(originalInventory).orElseThrow(
+                () -> new PurchasingOrderNotFound("Purchase order not found for inventory ID: " + inventory_id)
         );
 
+        System.out.println("LONG Inventory ID: " + inventory_id);
 
         // Creating a logic in MRP (Variables)
         int initialInventory = originalInventory.getFinalInventory() + lastPurchaseOrder.getOrderReceived();
         int finalInventory = initialInventory - lastPurchaseOrder.getDemand() + lastPurchaseOrder.getOrderReceived();
-        System.out.println("First Initial Inventory: " + initialInventory);
-        System.out.println("First Final Inventory: " + finalInventory);
-
-        if(lastPurchaseOrder.getWeek() > 2){
-            initialInventory = originalInventory.getFinalInventory() + dtoUpdatePurchasingOrder.orderReceived();
-            finalInventory = initialInventory - dtoUpdatePurchasingOrder.demand() + dtoUpdatePurchasingOrder.orderReceived();
-
-            System.out.println("Second Initial Inventory: " + initialInventory);
-            System.out.println("Second Final Inventory: " + finalInventory);
-        }
-
-
         int orderPlaced = originalInventory.getSafetyStock() - finalInventory;
 
-        // Creating a new PurchaseOrder
-        PurchaseOrder newPurchaseOrder = new PurchaseOrder();
-        newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1);
-        newPurchaseOrder.setDemand(dtoUpdatePurchasingOrder.demand());
-        newPurchaseOrder.setOrderPlaced(orderPlaced);
-        newPurchaseOrder.setOrderReceived(dtoUpdatePurchasingOrder.orderReceived());
-        newPurchaseOrder.setInventory(originalInventory);
 
-
-        // Creating a new Inventory
         Inventory newInventory = new Inventory();
         newInventory.setMaterialName(originalInventory.getMaterialName());
         newInventory.setMaterial(originalInventory.getMaterial());
@@ -111,12 +87,29 @@ public class PurchaseOrderService {
         newInventory.setFinalInventory(finalInventory);
         newInventory.setPendingOrder(orderPlaced);
         newInventory.setDemand(dtoUpdatePurchasingOrder.demand());
-        newInventory.setWeek(newPurchaseOrder.getWeek());
-        newInventory.setRelatedPurchaseOrder(newPurchaseOrder);
+        newInventory.setWeek(lastPurchaseOrder.getWeek() + 1);
 
-        purchaseOrderRepository.save(newPurchaseOrder);
+        if(lastPurchaseOrder.getWeek() > 2){
+            initialInventory = originalInventory.getFinalInventory() + dtoUpdatePurchasingOrder.orderReceived();
+            finalInventory = initialInventory - dtoUpdatePurchasingOrder.demand() + dtoUpdatePurchasingOrder.orderReceived();
+            orderPlaced = originalInventory.getSafetyStock() - finalInventory;
+
+        }
+
+        PurchaseOrder newPurchaseOrder = new PurchaseOrder();
+        newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1 );
+        newPurchaseOrder.setDemand(dtoUpdatePurchasingOrder.demand());
+        newPurchaseOrder.setOrderPlaced(orderPlaced);
+        newPurchaseOrder.setOrderReceived(dtoUpdatePurchasingOrder.orderReceived());
+
+        newPurchaseOrder.getInventories().add(newInventory);
+
+        newInventory.getRelatedPurchaseOrders().add(newPurchaseOrder);
+
         inventoryRepository.save(newInventory);
 
+
+        purchaseOrderRepository.save(newPurchaseOrder);
 
         return new DTODetailUpdatePurchasingOrder(
                 newPurchaseOrder.getPurchaseOrder_id(),
@@ -133,15 +126,22 @@ public class PurchaseOrderService {
         List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll();
 
         return purchaseOrders.stream()
-                .filter(purchaseOrder -> "Material A - (Pen)".equals(purchaseOrder.getInventory().getMaterialName()))
+                .filter(purchaseOrder -> purchaseOrder.getInventories() != null &&
+                        purchaseOrder.getInventories().stream()
+                                .anyMatch(inventory -> "Material A - (Pen)".equals(inventory.getMaterialName())))
                 .map(purchaseOrder -> new DTOAllPurchaseOrder(
                         purchaseOrder.getPurchaseOrder_id(),
                         purchaseOrder.getWeek(),
                         purchaseOrder.getOrderPlaced(),
                         purchaseOrder.getOrderReceived(),
                         purchaseOrder.getDemand(),
-                        purchaseOrder.getInventory().getMaterialName()
-                )).collect(Collectors.toList());
+                        purchaseOrder.getInventories().stream()
+                                .filter(inventory -> "Material A - (Pen)".equals(inventory.getMaterialName()))
+                                .findFirst()
+                                .map(Inventory::getMaterialName)
+                                .orElse(null)
+                ))
+                .collect(Collectors.toList());
     }
 
     // GET ALL with filter Materials B
@@ -150,14 +150,21 @@ public class PurchaseOrderService {
         List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll();
 
         return purchaseOrders.stream()
-                .filter(purchaseOrder -> "Material B - (Package)".equals(purchaseOrder.getInventory().getMaterialName()))
+                .filter(purchaseOrder -> purchaseOrder.getInventories() != null &&
+                        purchaseOrder.getInventories().stream()
+                                .anyMatch(inventory -> "Material B - (Package)".equals(inventory.getMaterialName())))
                 .map(purchaseOrder -> new DTOAllPurchaseOrder(
                         purchaseOrder.getPurchaseOrder_id(),
                         purchaseOrder.getWeek(),
                         purchaseOrder.getOrderPlaced(),
                         purchaseOrder.getOrderReceived(),
                         purchaseOrder.getDemand(),
-                        purchaseOrder.getInventory().getMaterialName()
-                )).collect(Collectors.toList());
+                        purchaseOrder.getInventories().stream()
+                                .filter(inventory -> "Material B - (Package)".equals(inventory.getMaterialName()))
+                                .findFirst()
+                                .map(Inventory::getMaterialName)
+                                .orElse(null)
+                ))
+                .collect(Collectors.toList());
     }
 }

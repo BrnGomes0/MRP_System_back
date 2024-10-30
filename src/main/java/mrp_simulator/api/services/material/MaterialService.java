@@ -1,6 +1,7 @@
 package mrp_simulator.api.services.material;
 
 import mrp_simulator.api.dtos.material.DTODeleteMaterial;
+import mrp_simulator.api.dtos.material.DTODetailMaterialCreated;
 import mrp_simulator.api.dtos.material.DTORegisterItem;
 import mrp_simulator.api.models.Material;
 import mrp_simulator.api.repositories.MaterialRepository;
@@ -21,11 +22,15 @@ public class MaterialService {
     @Autowired
     MaterialRepository registerAItemRepository;
 
-    public ResponseEntity<Material> registerAItem(DTORegisterItem registerAItemRecordDto){
-            var registerAItemn = new Material();
-            BeanUtils.copyProperties(registerAItemRecordDto, registerAItemn);
-            var registerANewItem = registerAItemRepository.save(registerAItemn);
-            return ResponseEntity.status(HttpStatus.CREATED).body(registerANewItem);
+    public DTODetailMaterialCreated createMaterial(DTORegisterItem registerAItemRecordDto){
+            Material material = new Material(registerAItemRecordDto);
+            registerAItemRepository.save(material);
+            return new DTODetailMaterialCreated(
+                    material.getIdMaterial(),
+                    material.getMaterialCode(),
+                    material.getDemand(),
+                    material.getInitialInventory(),
+                    material.getSafetyStock());
     }
 
     public ResponseEntity<List<Material>> getAllRegisteredItem(){
@@ -51,5 +56,4 @@ public class MaterialService {
 
         return new DTODeleteMaterial(idMaterial, messsage_deleted);
     }
-
 }

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "PurchaseOrder")
 @Table(name = "purchaseorder")
 @Getter
@@ -23,7 +26,11 @@ public class PurchaseOrder {
     private Integer orderReceived;
     private Integer demand;
 
-    @ManyToOne
-    @JoinColumn(name = "inventory_id", nullable = false)
-    private Inventory inventory;
+    @ManyToMany(mappedBy = "relatedPurchaseOrders")
+    private List<Inventory> inventories = new ArrayList<>();
+
+    public void addInventory(Inventory inventory) {
+        inventories.add(inventory);
+        inventory.getRelatedPurchaseOrders().add(this);
+    }
 }

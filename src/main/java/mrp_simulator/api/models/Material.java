@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mrp_simulator.api.dtos.material.DTORegisterItem;
 
 @Entity(name = "Material")
 @Table(name = "material")
@@ -23,4 +24,10 @@ public class Material {
     private Integer safetyStock;
 
 
+    public Material(DTORegisterItem registerItem){
+        this.materialCode = registerItem.materialCode();
+        this.demand = registerItem.demand();
+        this.initialInventory = registerItem.inicialInventory();
+        this.safetyStock = registerItem.safetyStock();
+    }
 }
