@@ -18,7 +18,7 @@ public class Material {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idMaterial;
 
-    private Integer materialCode;
+    private String materialCode;
     private Integer demand;
     private Integer initialInventory;
     private Integer safetyStock;

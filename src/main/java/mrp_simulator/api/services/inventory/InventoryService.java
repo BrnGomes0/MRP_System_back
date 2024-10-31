@@ -45,9 +45,9 @@ public class InventoryService {
         inventory.setSafetyStock(material.getSafetyStock());
         inventory.setDemand(material.getDemand());
         inventory.setMaterial(material);
-        if(material.getMaterialCode().equals(1230)){
+        if(material.getMaterialCode().equals("1230")){
             inventory.setMaterialName("Material A - (Pen)");
-        } else if (material.getMaterialCode().equals(1240)) {
+        } else if (material.getMaterialCode().equals("1240")) {
             inventory.setMaterialName("Material B - (Package)");
         }
 

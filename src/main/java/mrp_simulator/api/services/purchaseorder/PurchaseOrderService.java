@@ -97,7 +97,7 @@ public class PurchaseOrderService {
         }
 
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
-        newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1 );
+        newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1);
         newPurchaseOrder.setDemand(dtoUpdatePurchasingOrder.demand());
         newPurchaseOrder.setOrderPlaced(orderPlaced);
         newPurchaseOrder.setOrderReceived(dtoUpdatePurchasingOrder.orderReceived());

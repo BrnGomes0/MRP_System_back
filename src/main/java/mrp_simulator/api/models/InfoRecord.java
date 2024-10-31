@@ -19,11 +19,11 @@ public class InfoRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idInfoRecord;
 
-    private int materialCode;
+    private String materialCode;
 
-    private int supplierCode;
+    private Integer supplierCode;
     private String materialText;
     private BigDecimal price;
-    private int leadTime;
+    private Integer leadTime;
 
 }

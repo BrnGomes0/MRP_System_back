@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface InforecordRepository extends JpaRepository<InfoRecord, Long> {
-    Optional<InfoRecord> findByMaterialCode(int materialCode);
+    Optional<InfoRecord> findByMaterialCode(String materialCode);
     Optional<InfoRecord> findById(Long idInfoRecord);
 
 }

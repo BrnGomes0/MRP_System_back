@@ -36,17 +36,17 @@ public class InforecordService {
             InfoRecord createAInfoRecordN = new InfoRecord();
             var materialCode = last_material.getMaterialCode();
             createAInfoRecordN.setMaterialCode(materialCode);
-            if(materialCode == 1230){
+            if(materialCode.equals("1230")){
                 createAInfoRecordN.setMaterialText("Material A");
-            } else if (materialCode == 1240) {
+            } else if (materialCode.equals("1240")) {
                 createAInfoRecordN.setMaterialText("Material B");
             }
             createAInfoRecordN.setPrice(createInfoRecordDTO.price());
             createAInfoRecordN.setLeadTime(createInfoRecordDTO.leadTime());
 
-            if(materialCode == 1230) {
+            if(materialCode.equals("1230")) {
                 createAInfoRecordN.setSupplierCode(929028);
-            } else if (materialCode == 1240) {
+            } else if (materialCode.equals("1240")) {
                 createAInfoRecordN.setSupplierCode(929029);
             }
 
