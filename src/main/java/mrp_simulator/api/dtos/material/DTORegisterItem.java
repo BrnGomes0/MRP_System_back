@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 public record DTORegisterItem(
         @NotNull String materialCode,
         @NotNull Integer demand,
-        @NotNull Integer inicialInventory,
+        @NotNull Integer initialInventory,
         @NotNull Integer safetyStock
 ) {
 }

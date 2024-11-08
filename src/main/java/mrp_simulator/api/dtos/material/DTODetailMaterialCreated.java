@@ -4,7 +4,7 @@ public record DTODetailMaterialCreated(
         Long material_id,
         String material_code,
         Integer demand,
-        Integer inicialInventory,
+        Integer initialInventory,
         Integer safetyStock
 ){
 }
