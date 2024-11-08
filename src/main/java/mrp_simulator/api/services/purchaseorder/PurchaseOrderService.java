@@ -42,7 +42,7 @@ public class PurchaseOrderService {
         }
 
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setWeek(1);
+        purchaseOrder.setWeek(0);
         purchaseOrder.setDemand(inventory.getDemand());
         purchaseOrder.setOrderPlaced(0);
         purchaseOrder.setOrderReceived(0);
@@ -74,9 +74,15 @@ public class PurchaseOrderService {
         System.out.println("LONG Inventory ID: " + inventory_id);
 
         // Creating a logic in MRP (Variables)
-        int initialInventory = originalInventory.getFinalInventory() + lastPurchaseOrder.getOrderReceived();
-        int finalInventory = initialInventory - lastPurchaseOrder.getDemand() + lastPurchaseOrder.getOrderReceived();
-        int orderPlaced = originalInventory.getSafetyStock() - finalInventory;
+        int initialInventory = originalInventory.getFinalInventory();
+        int finalInventory = initialInventory - dtoUpdatePurchasingOrder.demand() + dtoUpdatePurchasingOrder.orderReceived();
+        int orderPlaced = (originalInventory.getSafetyStock() - (finalInventory));
+
+        System.out.println("Valores para calcular o initial: " + originalInventory.getFinalInventory() + dtoUpdatePurchasingOrder.orderReceived());
+        System.out.println("inicial inventory: " + initialInventory);
+        System.out.println("Final inventory: " + finalInventory);
+        System.out.println("orderPlaced: " + orderPlaced);
+        System.out.println("id_inventory: " + inventory_id);
 
 
         Inventory newInventory = new Inventory();
@@ -87,14 +93,16 @@ public class PurchaseOrderService {
         newInventory.setFinalInventory(finalInventory);
         newInventory.setPendingOrder(orderPlaced);
         newInventory.setDemand(dtoUpdatePurchasingOrder.demand());
+
         newInventory.setWeek(lastPurchaseOrder.getWeek() + 1);
+        System.out.println("Ultima semana: " + lastPurchaseOrder.getWeek());
 
-        if(lastPurchaseOrder.getWeek() > 2){
-            initialInventory = originalInventory.getFinalInventory() + dtoUpdatePurchasingOrder.orderReceived();
-            finalInventory = initialInventory - dtoUpdatePurchasingOrder.demand() + dtoUpdatePurchasingOrder.orderReceived();
-            orderPlaced = originalInventory.getSafetyStock() - finalInventory;
-
-        }
+//        if(lastPurchaseOrder.getWeek() > 2){
+//            initialInventory = originalInventory.getFinalInventory() + dtoUpdatePurchasingOrder.orderReceived();
+//            finalInventory = initialInventory - dtoUpdatePurchasingOrder.demand() + dtoUpdatePurchasingOrder.orderReceived();
+//            orderPlaced = originalInventory.getSafetyStock() - finalInventory;
+//
+//        }
 
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setWeek(lastPurchaseOrder.getWeek() + 1);

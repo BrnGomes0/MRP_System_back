@@ -34,7 +34,7 @@ public class PurchaseOrderController {
     }
 
     // UPDATE
-    @PutMapping("/updatePurchasingOrder/{inventory_id}")
+    @PostMapping("/updatePurchasingOrder/{inventory_id}")
     public ResponseEntity<DTODetailUpdatePurchasingOrder> updateThePurchasingOrder(@RequestBody @Valid DTOUpdatePurchasingOrder dtoUpdatePurchasingOrder, @PathVariable Long inventory_id){
         var updatePurchasingOrder = purchaseOrderService.updatePurchasingOrder(dtoUpdatePurchasingOrder, inventory_id);
         return ResponseEntity.status(HttpStatus.OK).body(updatePurchasingOrder);

@@ -3,12 +3,13 @@ package mrp_simulator.api.services.inventory;
 import jakarta.transaction.Transactional;
 import mrp_simulator.api.dtos.inventory.DTOAllInventory;
 import mrp_simulator.api.dtos.inventory.DTODetailFirstWeek;
-import mrp_simulator.api.infra.error.exceptions.FirstWeekMaterialRegisted;
-import mrp_simulator.api.infra.error.exceptions.MaterialNotFound;
+import mrp_simulator.api.infra.error.exceptions.*;
 import mrp_simulator.api.models.Inventory;
 import mrp_simulator.api.models.Material;
+import mrp_simulator.api.models.PurchaseOrder;
 import mrp_simulator.api.repositories.InventoryRepository;
 import mrp_simulator.api.repositories.MaterialRepository;
+import mrp_simulator.api.repositories.PurchaseOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,9 @@ public class InventoryService {
     @Autowired
     private MaterialRepository materialRepository;
 
+    @Autowired
+    private PurchaseOrderRepository purchaseOrderRepository;
+
     @Transactional
     // POST -> First Week (1)
     public DTODetailFirstWeek registerFirstWeek (@PathVariable Long material_id){
@@ -33,15 +37,19 @@ public class InventoryService {
         Material material = materialRepository.findById(material_id).
                 orElseThrow(() -> new MaterialNotFound("Material Not Found with that ID: " + material_id));
 
-        boolean isMaterialRegistered = inventoryRepository.existsByMaterialAndWeek(material, 1);
+        boolean isMaterialRegistered = inventoryRepository.existsByMaterialAndWeek(material, 0);
         if(isMaterialRegistered){
             throw new FirstWeekMaterialRegisted("Material already registered for the first week: " + material.getMaterialCode());
         }
 
+        int initialInventory = material.getInitialInventory();
+        int finalInventory = initialInventory - material.getDemand();
+        int orderPlaced = material.getSafetyStock() - finalInventory;
+
         Inventory inventory = new Inventory();
-        inventory.setWeek(1);
-        inventory.setInitialInventory(material.getInitialInventory());
-        inventory.setFinalInventory(material.getInitialInventory());
+        inventory.setWeek(0);
+        inventory.setInitialInventory(initialInventory);
+        inventory.setFinalInventory(finalInventory);
         inventory.setSafetyStock(material.getSafetyStock());
         inventory.setDemand(material.getDemand());
         inventory.setMaterial(material);
