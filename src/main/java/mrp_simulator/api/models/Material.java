@@ -27,7 +27,7 @@ public class Material {
     public Material(DTORegisterItem registerItem){
         this.materialCode = registerItem.materialCode();
         this.demand = registerItem.demand();
-        this.initialInventory = registerItem.inicialInventory();
+        this.initialInventory = registerItem.initialInventory();
         this.safetyStock = registerItem.safetyStock();
     }
 }

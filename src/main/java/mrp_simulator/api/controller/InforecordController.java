@@ -20,7 +20,7 @@ public class InforecordController {
     @Autowired
     InforecordService inforecordService;
 
-    @PostMapping("/teste")
+    @PostMapping("/test")
     public ResponseEntity<InfoRecord> createAInfoRecord(@RequestBody @Valid DTOCreateInfoRecord createInfoRecordDTO){
         return inforecordService.createAInfoRecord(createInfoRecordDTO);
     }
